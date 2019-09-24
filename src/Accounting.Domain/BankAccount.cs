@@ -85,4 +85,79 @@ namespace Accounting.Domain
 
         }
     }
+
+    public class Account
+    {
+        private List<AccountingEntry> entries = new List<AccountingEntry>();
+        //private Currency currency;
+        public void AddEntry(decimal amount, DateTimeOffset date)
+        {
+            // Assert.equals(currency, amount.currency());
+            entries.Add(new AccountingEntry(amount, date));
+        }
+        //private Currency currency;
+        public void AddEntry(AccountingEntry entry)
+        {
+            // Assert.equals(currency, amount.currency());
+            entries.Add(entry);
+        }
+
+        public decimal Balance()
+        {
+            decimal result = 0;
+            foreach (var entry in entries)
+            {
+                result += entry.Amount;
+            }
+
+            return result;
+        }
+
+        public void Withdraw(decimal amount, Account target, DateTimeOffset date)
+        {
+            new AccountingTransaction(amount, this, target, date);
+        }
+
+        public void Deposit(decimal amount, Account source, DateTimeOffset date)
+        {
+            new AccountingTransaction(amount, source, this, date);
+        }
+    }
+
+    public class AccountingEntry
+    {
+        public AccountingEntry(decimal amount, DateTimeOffset date)
+        {
+            Amount = amount;
+        }
+
+        public decimal Amount { get; }
+    }
+
+    public class AccountingTransaction
+    {
+        private List<AccountingEntry> entries = new List<AccountingEntry>();
+
+        public AccountingTransaction(decimal amount, Account from, Account to, DateTimeOffset date)
+        {
+            AccountingEntry fromEntry = new AccountingEntry(-amount, date);
+            from.AddEntry(fromEntry);
+            entries.Add(fromEntry);
+
+            AccountingEntry toEntry = new AccountingEntry(amount, date);
+            to.AddEntry(toEntry);
+            entries.Add(toEntry);
+        }
+        //public void testBalanceUsingTransactions()
+        //{
+        //    revenue = new Account(Currency.USD);
+        //    deferred = new Account(Currency.USD);
+        //    receivables = new Account(Currency.USD);
+        //    revenue.withdraw(Money.dollars(500), receivables, new MfDate(1, 4, 99));
+        //    revenue.withdraw(Money.dollars(200), deferred, new MfDate(1, 4, 99));
+        //    assertEquals(Money.dollars(500), receivables.balance());
+        //    assertEquals(Money.dollars(200), deferred.balance());
+        //    assertEquals(Money.dollars(-700), revenue.balance());
+        //}
+    }
 }

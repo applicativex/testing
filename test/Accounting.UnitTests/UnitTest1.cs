@@ -1,4 +1,6 @@
+using Accounting.Domain;
 using NUnit.Framework;
+using System;
 
 namespace Accounting.UnitTests
 {
@@ -12,7 +14,13 @@ namespace Accounting.UnitTests
         [Test]
         public void Test1()
         {
-            Assert.Pass();
+            var cashAccount = new Account();
+            var bankAccount = new Account();
+
+            bankAccount.Deposit(100, cashAccount, DateTimeOffset.UtcNow);
+
+            Assert.That(cashAccount.Balance(), Is.EqualTo(-100m));
+            Assert.That(bankAccount.Balance(), Is.EqualTo(100m));
         }
     }
 }
