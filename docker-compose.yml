@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Accounting.ComponentTests/Dockerfile
     depends_on:
-      - betstore
+      - accounting
     entrypoint: bash /integration/wait_for_it.sh accounting:80 -t 0 -- dotnet test ./Accounting.ComponentTests/Accounting.ComponentTests.csproj
 
   accounting:

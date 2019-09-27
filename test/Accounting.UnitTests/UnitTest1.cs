@@ -14,8 +14,8 @@ namespace Accounting.UnitTests
         [Test]
         public void Test1()
         {
-            var cashAccount = new Account();
-            var bankAccount = new Account();
+            var cashAccount = new Account(Guid.NewGuid(), AccountCurrency.UAH);
+            var bankAccount = new Account(Guid.NewGuid(), AccountCurrency.UAH);
 
             bankAccount.Deposit(100, cashAccount, DateTimeOffset.UtcNow);
 
