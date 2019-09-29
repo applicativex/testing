@@ -1,0 +1,1 @@
+docker build -f ./src/Accounting.Host/Dockerfile -t accounting .

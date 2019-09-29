@@ -21,6 +21,7 @@ RUN dotnet publish -c Release -o out
 # runtime stage
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS runtime
 WORKDIR /app
+COPY --from=build /app/test/Accounting.ComponentTests/wait_for_it.sh ./
 COPY --from=build /app/src/Accounting.Host/out ./
 RUN ls
 

@@ -1,5 +1,5 @@
 FROM microsoft/dotnet:2.2-sdk
-WORKDIR /integration
+WORKDIR /testing
 
 COPY ./ .
 

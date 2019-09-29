@@ -22,7 +22,11 @@ namespace Accounting.Host.Controllers
         public async Task<IActionResult> GetAccount(Guid accountId)
         {
             var account = await _accountRepository.FindAsync(accountId);
-            return Ok(account.Balance());
+            return Ok(new AccountResponse
+            {
+                Id = account.Id.ToString("N"),
+                Balance = account.Balance()
+            });
         }
 
         [HttpPost("")]
@@ -31,7 +35,7 @@ namespace Accounting.Host.Controllers
             var account = new Account(Guid.NewGuid(), AccountCurrency.UAH);
             await _accountRepository.SaveAsync(account);
 
-            return Ok(account.Id);
+            return Ok(account.Id.ToString("N"));
         }
 
         [HttpPost("transaction")]
@@ -44,6 +48,13 @@ namespace Accounting.Host.Controllers
 
             return Ok();
         }
+    }
+
+    public class AccountResponse
+    {   
+        public string Id { get; set; }
+
+        public decimal Balance { get; set; }
     }
 
     public class TransactionRequest
