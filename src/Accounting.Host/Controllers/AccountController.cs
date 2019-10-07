@@ -43,9 +43,7 @@ namespace Accounting.Host.Controllers
         {
             var from = await _accountRepository.FindAsync(transaction.From);
             var to = await _accountRepository.FindAsync(transaction.To);
-
-            await _accountRepository.SaveAsync(from.Withdraw(transaction.Amount, to, DateTimeOffset.UtcNow));
-
+            
             return Ok();
         }
     }

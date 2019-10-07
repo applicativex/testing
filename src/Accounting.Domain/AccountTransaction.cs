@@ -5,8 +5,22 @@ namespace Accounting.Domain
 {
     public class AccountTransaction
     {
-        private List<AccountEntry> entries = new List<AccountEntry>();
+        public AccountTransaction()
+        {
 
+        }
+        public AccountTransaction(decimal amount, Guid fromId, Guid toId, DateTimeOffset date)
+        {
+            Id = Guid.NewGuid();
+            Amount = amount;
+            TransactionDate = date;
+            DebitEntry = new AccountEntry(Guid.NewGuid(), fromId, -amount, date);
+            CreditEntry = new AccountEntry(Guid.NewGuid(), toId, amount, date);
+
+            //from.AddEntry(DebitEntry);
+
+            //to.AddEntry(CreditEntry);
+        }
         public AccountTransaction(decimal amount, Account from, Account to, DateTimeOffset date)
         {
             Id = Guid.NewGuid();
@@ -15,23 +29,9 @@ namespace Accounting.Domain
             DebitEntry = new AccountEntry(Guid.NewGuid(), from.Id, -amount, date);
             CreditEntry = new AccountEntry(Guid.NewGuid(), to.Id, amount, date);
             
-            from.AddEntry(DebitEntry);
-            entries.Add(DebitEntry);
-
+            from.AddEntry(DebitEntry);            
             to.AddEntry(CreditEntry);
-            entries.Add(CreditEntry);
         }
-        //public void testBalanceUsingTransactions()
-        //{
-        //    revenue = new Account(Currency.USD);
-        //    deferred = new Account(Currency.USD);
-        //    receivables = new Account(Currency.USD);
-        //    revenue.withdraw(Money.dollars(500), receivables, new MfDate(1, 4, 99));
-        //    revenue.withdraw(Money.dollars(200), deferred, new MfDate(1, 4, 99));
-        //    assertEquals(Money.dollars(500), receivables.balance());
-        //    assertEquals(Money.dollars(200), deferred.balance());
-        //    assertEquals(Money.dollars(-700), revenue.balance());
-        //}
 
         public Guid Id { get; }
         public AccountEntry DebitEntry { get; }
@@ -40,5 +40,61 @@ namespace Accounting.Domain
         public decimal Amount { get; }
 
         public DateTimeOffset TransactionDate { get; }
+
+        public virtual void Execute()
+        {
+
+        }
+    }
+
+    public class DepositTransaction : AccountTransaction
+    {
+        private readonly Account account;
+
+        public DepositTransaction(decimal amount, Account account, DateTime dateTime)
+            :base(amount, account.Id, account.Id, dateTime)
+        {
+            this.account = account; 
+        }
+
+        public override void Execute()
+        {
+            account.AddEntry(CreditEntry);
+        }
+    }
+
+    public class WithdrawTransaction : AccountTransaction
+    {
+        private readonly Account account;
+
+        public WithdrawTransaction(decimal amount, Account account, DateTime dateTime)
+            : base(amount, account.Id, account.Id, dateTime)
+        {
+            this.account = account;
+        }
+
+        public override void Execute()
+        {
+            account.AddEntry(DebitEntry);
+        }
+    }
+
+    public class TransferTransaction : AccountTransaction
+    {
+        private readonly Account fromAccount;
+        private readonly Account toAccount;
+
+        public TransferTransaction(decimal amount, Account fromAccount, Account toAccount, DateTime dateTime)
+            : base(amount, fromAccount.Id, toAccount.Id, dateTime)
+        {
+            this.fromAccount = fromAccount;
+            this.toAccount = toAccount;
+        }
+
+        public override void Execute()
+        {
+            fromAccount.AddEntry(DebitEntry);
+            toAccount.AddEntry(CreditEntry);
+        }
     }
 }

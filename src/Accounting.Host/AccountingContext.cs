@@ -35,7 +35,8 @@ namespace Accounting.Host
                 .HasForeignKey<AccountTransactionData>(x => x.CreditEntryId);
         }
     }
-        public class AccountData
+
+    public class AccountData
     {
         public Guid Id { get; set; }
 

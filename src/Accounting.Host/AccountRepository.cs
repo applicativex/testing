@@ -32,32 +32,5 @@ namespace Accounting.Host
             await accountingContext.Accounts.AddAsync(new AccountData { Id = account.Id, Currency = (int)account.Currency, });
             await accountingContext.SaveChangesAsync();
         }
-
-        public async Task SaveAsync(AccountTransaction accountingTransaction)
-        {
-            await accountingContext.AddRangeAsync(
-                new AccountEntryData
-                {
-                    Id = accountingTransaction.DebitEntry.Id,
-                    AccountId = accountingTransaction.DebitEntry.AccountId,
-                    Amount = accountingTransaction.DebitEntry.Amount,
-                    EntryDate = accountingTransaction.DebitEntry.EntryDate
-                }, new AccountEntryData
-                {
-                    Id = accountingTransaction.CreditEntry.Id,
-                    AccountId = accountingTransaction.CreditEntry.AccountId,
-                    Amount = accountingTransaction.CreditEntry.Amount,
-                    EntryDate = accountingTransaction.DebitEntry.EntryDate
-                },
-                new AccountTransactionData
-                {
-                    Id = accountingTransaction.Id,
-                    Amount = accountingTransaction.Amount,
-                    TransactionDate = accountingTransaction.TransactionDate,
-                    DebitEntryId = accountingTransaction.DebitEntry.Id,
-                    CreditEntryId = accountingTransaction.CreditEntry.Id,
-                });
-            await accountingContext.SaveChangesAsync();
-        }
     }
 }

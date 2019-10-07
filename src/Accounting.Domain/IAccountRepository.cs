@@ -8,7 +8,5 @@ namespace Accounting.Domain
         Task<Account> FindAsync(Guid accountId);
 
         Task SaveAsync(Account account);
-
-        Task SaveAsync(AccountTransaction transaction);
     }
 }

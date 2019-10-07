@@ -5,11 +5,14 @@ namespace Accounting.Domain
 {
     public class Account
     {
+        public static readonly Guid SYSTEM_ACCOUNT_ID = Guid.NewGuid();
+        
         public Account(Guid id, AccountCurrency currency)
         {
             Id = id;
             Currency = currency;
         }
+
         private List<AccountEntry> entries = new List<AccountEntry>();
         public Guid Id { get; }
         public AccountCurrency Currency { get; }
@@ -41,6 +44,11 @@ namespace Accounting.Domain
 
         public AccountTransaction Withdraw(decimal amount, Account target, DateTimeOffset date)
         {
+            if (Balance() < amount)
+            {
+                throw new InvalidOperationException();
+            }
+
             return new AccountTransaction(amount, this, target, date);
         }
 
