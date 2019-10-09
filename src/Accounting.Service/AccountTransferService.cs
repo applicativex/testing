@@ -19,8 +19,8 @@ namespace Accounting.Service
         {
             var fromAccount = await accountRepository.FindAsync(fromAccountId);
             var toAccount = await accountRepository.FindAsync(toAccountId);
-            var transfer = fromAccount.Withdraw(amount, toAccount, DateTimeOffset.UtcNow);
-            await accountTransactionRepository.SaveAsync(transfer);
+
+            await accountTransactionRepository.SaveAsync(fromAccount.Transfer(toAccount, amount));
             Console.WriteLine("yaluibliumeymeychyna");
         }
     }

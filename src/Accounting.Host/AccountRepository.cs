@@ -22,9 +22,10 @@ namespace Accounting.Host
                 .Include(x => x.Entries)
                 .SingleOrDefaultAsync(x => x.Id == accountId);
 
-            return account.Entries.Aggregate(
-                new Account(account.Id, (AccountCurrency)account.Currency), 
-                (ac, x) => ac.AddEntry(new AccountEntry(x.Id, x.AccountId, x.Amount, x.EntryDate)));
+            return new Account(
+                account.Id,
+                (AccountCurrency)account.Currency,
+                account.Entries.Select(x => new AccountEntry(x.Id, x.AccountId, x.Amount, x.EntryDate)).ToList());
         }
 
         public async Task SaveAsync(Account account)

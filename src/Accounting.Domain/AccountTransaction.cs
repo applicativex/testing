@@ -1,100 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Accounting.Domain
 {
     public class AccountTransaction
     {
-        public AccountTransaction()
-        {
-
-        }
-        public AccountTransaction(decimal amount, Guid fromId, Guid toId, DateTimeOffset date)
-        {
-            Id = Guid.NewGuid();
-            Amount = amount;
-            TransactionDate = date;
-            DebitEntry = new AccountEntry(Guid.NewGuid(), fromId, -amount, date);
-            CreditEntry = new AccountEntry(Guid.NewGuid(), toId, amount, date);
-
-            //from.AddEntry(DebitEntry);
-
-            //to.AddEntry(CreditEntry);
-        }
-        public AccountTransaction(decimal amount, Account from, Account to, DateTimeOffset date)
-        {
-            Id = Guid.NewGuid();
-            Amount = amount;
-            TransactionDate = date;
-            DebitEntry = new AccountEntry(Guid.NewGuid(), from.Id, -amount, date);
-            CreditEntry = new AccountEntry(Guid.NewGuid(), to.Id, amount, date);
-            
-            from.AddEntry(DebitEntry);            
-            to.AddEntry(CreditEntry);
-        }
-
         public Guid Id { get; }
-        public AccountEntry DebitEntry { get; }
-        public AccountEntry CreditEntry { get; }
 
         public decimal Amount { get; }
 
         public DateTimeOffset TransactionDate { get; }
 
-        public virtual void Execute()
+        public AccountEntry DebitEntry { get; }
+
+        public AccountEntry CreditEntry { get; }
+
+        public AccountTransaction(Guid id, decimal amount, DateTimeOffset transactionDate, AccountEntry debitEntry, AccountEntry creditEntry)
         {
-
-        }
-    }
-
-    public class DepositTransaction : AccountTransaction
-    {
-        private readonly Account account;
-
-        public DepositTransaction(decimal amount, Account account, DateTime dateTime)
-            :base(amount, account.Id, account.Id, dateTime)
-        {
-            this.account = account; 
+            Id = id;
+            Amount = amount;
+            TransactionDate = transactionDate;
+            DebitEntry = debitEntry;
+            CreditEntry = creditEntry;
         }
 
-        public override void Execute()
+        public static AccountTransaction DepositTransaction(Account account, decimal amount)
         {
-            account.AddEntry(CreditEntry);
-        }
-    }
-
-    public class WithdrawTransaction : AccountTransaction
-    {
-        private readonly Account account;
-
-        public WithdrawTransaction(decimal amount, Account account, DateTime dateTime)
-            : base(amount, account.Id, account.Id, dateTime)
-        {
-            this.account = account;
+            return new AccountTransaction(Guid.NewGuid(), amount, DateTimeOffset.UtcNow, AccountEntry.SystemDebit(amount), account.Credit(amount));
         }
 
-        public override void Execute()
+        public static AccountTransaction WithdrawTransaction(Account account, decimal amount)
         {
-            account.AddEntry(DebitEntry);
-        }
-    }
-
-    public class TransferTransaction : AccountTransaction
-    {
-        private readonly Account fromAccount;
-        private readonly Account toAccount;
-
-        public TransferTransaction(decimal amount, Account fromAccount, Account toAccount, DateTime dateTime)
-            : base(amount, fromAccount.Id, toAccount.Id, dateTime)
-        {
-            this.fromAccount = fromAccount;
-            this.toAccount = toAccount;
+            return new AccountTransaction(Guid.NewGuid(), amount, DateTimeOffset.UtcNow, account.Debit(amount), AccountEntry.SystemCredit(amount));
         }
 
-        public override void Execute()
+        public static AccountTransaction TransferTransaction(Account fromAccount, Account toAccount, decimal amount)
         {
-            fromAccount.AddEntry(DebitEntry);
-            toAccount.AddEntry(CreditEntry);
+            return new AccountTransaction(Guid.NewGuid(), amount, DateTimeOffset.UtcNow, fromAccount.Debit(amount), toAccount.Credit(amount));
         }
     }
 }

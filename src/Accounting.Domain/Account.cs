@@ -5,30 +5,38 @@ namespace Accounting.Domain
 {
     public class Account
     {
-        public static readonly Guid SYSTEM_ACCOUNT_ID = Guid.NewGuid();
-        
-        public Account(Guid id, AccountCurrency currency)
+        public Account(Guid id, AccountCurrency currency, List<AccountEntry> entries)
         {
             Id = id;
             Currency = currency;
+            this.entries = entries;
+        }
+        public Account(Guid id, AccountCurrency currency)
+            : this(id, currency, new List<AccountEntry>())
+        {
         }
 
         private List<AccountEntry> entries = new List<AccountEntry>();
+
         public Guid Id { get; }
+
         public AccountCurrency Currency { get; }
 
-        //private Currency currency;
-        public void AddEntry(decimal amount, DateTimeOffset date)
+        public IReadOnlyList<AccountEntry> Entries => entries;
+
+        public AccountEntry Credit(decimal amount)
         {
-            // Assert.equals(currency, amount.currency());
-            entries.Add(new AccountEntry(Guid.NewGuid(), Id, amount, date));
+            return AddEntry(amount);
         }
-        //private Currency currency;
-        public Account AddEntry(AccountEntry entry)
+
+        public AccountEntry Debit(decimal amount)
         {
-            // Assert.equals(currency, amount.currency());
-            entries.Add(entry);
-            return this;
+            if (Balance() < amount)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return AddEntry(-amount);
         }
 
         public decimal Balance()
@@ -42,19 +50,26 @@ namespace Accounting.Domain
             return result;
         }
 
-        public AccountTransaction Withdraw(decimal amount, Account target, DateTimeOffset date)
+        private AccountEntry AddEntry(decimal amount)
         {
-            if (Balance() < amount)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return new AccountTransaction(amount, this, target, date);
+            var entry = new AccountEntry(Guid.NewGuid(), Id, amount, DateTimeOffset.UtcNow);
+            entries.Add(entry);
+            return entry;
         }
+    }
 
-        public void Deposit(decimal amount, Account source, DateTimeOffset date)
-        {
-            new AccountTransaction(amount, source, this, date);
-        }
+    public static class AccountExt
+    {
+        public static AccountTransaction Deposit(this Account account, decimal amount)
+            =>
+            AccountTransaction.DepositTransaction(account, amount);
+
+        public static AccountTransaction Withdraw(this Account account, decimal amount)
+            =>
+            AccountTransaction.WithdrawTransaction(account, amount);
+
+        public static AccountTransaction Transfer(this Account fromAccount, Account toAccount, decimal amount)
+            =>
+            AccountTransaction.TransferTransaction(fromAccount, toAccount, amount);
     }
 }
