@@ -1,5 +1,7 @@
 ﻿using System;
 using Accounting.Domain;
+using Accounting.Service;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,7 @@ namespace Accounting.Host
         {
             services.AddDbContext<AccountingContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddMediatR(typeof(AccountTransferService));
             services.AddMvc();
         }
 
