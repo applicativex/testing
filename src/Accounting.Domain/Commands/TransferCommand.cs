@@ -5,14 +5,16 @@ using System.Text;
 
 namespace Accounting.Domain.Commands
 {
-    public class DepositAccountCommand : IRequest<DepositAccountResult>
+    public class TransferCommand : IRequest<TransferResult>
     {
-        public Guid AccountId { get; set; }
+        public Guid FromAccountId { get; set; }
+
+        public Guid ToAccountId { get; set; }
 
         public decimal Amount { get; set; }
     }
 
-    public class DepositAccountResult
+    public class TransferResult
     {
         public Guid TransactionId { get; set; }
     }

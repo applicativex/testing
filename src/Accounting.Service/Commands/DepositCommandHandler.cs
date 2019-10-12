@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 
 namespace Accounting.Service.Commands
 {
-    public class DepositAccountCommandHandler : IRequestHandler<DepositAccountCommand, DepositAccountResult>
+    public class DepositCommandHandler : IRequestHandler<DepositCommand, DepositResult>
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IAccountTransactionRepository _accountTransactionRepository;
 
-        public DepositAccountCommandHandler(IAccountRepository accountRepository, IAccountTransactionRepository accountTransactionRepository)
+        public DepositCommandHandler(IAccountRepository accountRepository, IAccountTransactionRepository accountTransactionRepository)
         {
             _accountRepository = accountRepository;
             _accountTransactionRepository = accountTransactionRepository;
         }
 
-        public async Task<DepositAccountResult> Handle(DepositAccountCommand request, CancellationToken cancellationToken)
+        public async Task<DepositResult> Handle(DepositCommand request, CancellationToken cancellationToken)
         {
             var account = await _accountRepository.FindAsync(request.AccountId);
             var depositTransaction = account.Deposit(request.Amount);
+            
             await _accountTransactionRepository.SaveAsync(depositTransaction);
-            return new DepositAccountResult
+
+            return new DepositResult
             {
                 TransactionId = depositTransaction.Id
             };

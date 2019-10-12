@@ -23,18 +23,23 @@ namespace Accounting.Domain
             CreditEntry = creditEntry;
         }
 
-        public static AccountTransaction DepositTransaction(Account account, decimal amount)
+        public static AccountTransaction DepositTransaction(IAccountable account, decimal amount)
         {
-            return new AccountTransaction(Guid.NewGuid(), amount, DateTimeOffset.UtcNow, AccountEntry.SystemDebit(amount), account.Credit(amount));
+            return TransferTransaction(SystemAccount.FromCurrency(account.Currency), account, amount);
         }
 
-        public static AccountTransaction WithdrawTransaction(Account account, decimal amount)
+        public static AccountTransaction WithdrawTransaction(IAccountable account, decimal amount)
         {
-            return new AccountTransaction(Guid.NewGuid(), amount, DateTimeOffset.UtcNow, account.Debit(amount), AccountEntry.SystemCredit(amount));
+            return TransferTransaction(account, SystemAccount.FromCurrency(account.Currency), amount);
         }
 
-        public static AccountTransaction TransferTransaction(Account fromAccount, Account toAccount, decimal amount)
+        public static AccountTransaction TransferTransaction(IAccountable fromAccount, IAccountable toAccount, decimal amount)
         {
+            if (fromAccount.Currency != toAccount.Currency)
+            {
+                throw new InvalidOperationException("Accounts should have same currency.");
+            }
+
             return new AccountTransaction(Guid.NewGuid(), amount, DateTimeOffset.UtcNow, fromAccount.Debit(amount), toAccount.Credit(amount));
         }
     }

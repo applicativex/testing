@@ -16,6 +16,7 @@ namespace Accounting.UnitTests
 
             SUT = new Account(
                 accountId,
+                Guid.NewGuid(),
                 AccountCurrency.UAH, 
                 new List<AccountEntry>
                 {
@@ -42,7 +43,7 @@ namespace Accounting.UnitTests
         [Test]
         public void Account_Can_Transfer()
         {
-            var depositAccount = new Account(Guid.NewGuid(), AccountCurrency.UAH);
+            var depositAccount = new Account(Guid.NewGuid(), Guid.NewGuid(), AccountCurrency.UAH);
 
             SUT.Transfer(depositAccount, 50);
 

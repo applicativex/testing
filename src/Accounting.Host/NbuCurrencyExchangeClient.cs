@@ -46,6 +46,6 @@ namespace Accounting.Host
         public string Code { get; set; }
 
         [DataMember(Name = "exchangedate")]
-        public DateTimeOffset ExchangeDate { get; set; }
+        public string ExchangeDate { get; set; }
     }
 }

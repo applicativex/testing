@@ -19,7 +19,7 @@ namespace Accounting.IntegrationTests
         [Test]
         public async Task Test()
         {
-            var rates = SUT.GetExchangeRates().GetAwaiter().GetResult();
+            var rates = await SUT.GetExchangeRates();
             
             Assert.That(rates.Length, Is.GreaterThan(0));
             Array.ForEach(rates, x =>

@@ -3,26 +3,30 @@ using System.Collections.Generic;
 
 namespace Accounting.Domain
 {
-    public class Account
+    public sealed class Account : IAccountable
     {
-        public Account(Guid id, AccountCurrency currency, List<AccountEntry> entries)
+        private readonly List<AccountEntry> _entries = new List<AccountEntry>();
+
+        public Account(Guid id, Guid userAccountId, AccountCurrency currency, List<AccountEntry> entries)
         {
             Id = id;
+            UserId = userAccountId;
             Currency = currency;
-            this.entries = entries;
-        }
-        public Account(Guid id, AccountCurrency currency)
-            : this(id, currency, new List<AccountEntry>())
-        {
+            _entries = entries;
         }
 
-        private List<AccountEntry> entries = new List<AccountEntry>();
+        public Account(Guid id, Guid userAccountId, AccountCurrency currency)
+            : this(id, userAccountId, currency, new List<AccountEntry>())
+        {
+        }
 
         public Guid Id { get; }
 
+        public Guid UserId { get; } 
+
         public AccountCurrency Currency { get; }
 
-        public IReadOnlyList<AccountEntry> Entries => entries;
+        public IReadOnlyList<AccountEntry> Entries => _entries;
 
         public AccountEntry Credit(decimal amount)
         {
@@ -42,7 +46,7 @@ namespace Accounting.Domain
         public decimal Balance()
         {
             decimal result = 0;
-            foreach (var entry in entries)
+            foreach (var entry in _entries)
             {
                 result += entry.Amount;
             }
@@ -53,23 +57,8 @@ namespace Accounting.Domain
         private AccountEntry AddEntry(decimal amount)
         {
             var entry = new AccountEntry(Guid.NewGuid(), Id, amount, DateTimeOffset.UtcNow);
-            entries.Add(entry);
+            _entries.Add(entry);
             return entry;
         }
-    }
-
-    public static class AccountExt
-    {
-        public static AccountTransaction Deposit(this Account account, decimal amount)
-            =>
-            AccountTransaction.DepositTransaction(account, amount);
-
-        public static AccountTransaction Withdraw(this Account account, decimal amount)
-            =>
-            AccountTransaction.WithdrawTransaction(account, amount);
-
-        public static AccountTransaction Transfer(this Account fromAccount, Account toAccount, decimal amount)
-            =>
-            AccountTransaction.TransferTransaction(fromAccount, toAccount, amount);
     }
 }

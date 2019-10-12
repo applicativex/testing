@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Accounting.Domain.Queries
 {
-    public class GetAccountBalanceQuery : IRequest<GetAccountBalanceQuery>
+    public class GetAccountQuery : IRequest<GetAccountQueryResult>
     {
         public Guid AccountId { get; set; }
     }
 
-    public class GetAccountBalanceQueryResult
+    public class GetAccountQueryResult
     {
-        public Guid AccountId { get; set; }
+        public Guid Id { get; set; }
 
         public string Currency { get; set; }
 
-        public decimal Balance { get; set; }
+        public string Description { get; set; }
     }
 }

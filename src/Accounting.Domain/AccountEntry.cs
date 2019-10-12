@@ -4,7 +4,7 @@ namespace Accounting.Domain
 {
     public class AccountEntry
     {
-        private static readonly Guid SystemAccountId = Guid.NewGuid();
+        private static readonly Guid SystemAccountId = Guid.Parse("ea6b65f4-8c80-4d53-9aba-16254ef27c8f");
 
         public AccountEntry(Guid id, Guid accountId, decimal amount, DateTimeOffset entryDate)
         {

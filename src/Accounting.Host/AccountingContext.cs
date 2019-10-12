@@ -11,6 +11,8 @@ namespace Accounting.Host
         {
         }
 
+        public DbSet<UserData> Users { get; set; }
+
         public DbSet<AccountData> Accounts { get; set; }
 
         public DbSet<AccountEntryData> AccountEntries { get; set; }
@@ -19,6 +21,11 @@ namespace Accounting.Host
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AccountData>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.Accounts)
+                .HasForeignKey(x => x.UserId);
+
             modelBuilder.Entity<AccountEntryData>()
                 .HasOne(x => x.Account)
                 .WithMany(x => x.Entries)
@@ -36,11 +43,26 @@ namespace Accounting.Host
         }
     }
 
+    public class UserData
+    {
+        public Guid Id { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Email { get; set; }
+
+        public List<AccountData> Accounts { get; set; }
+    }
+
     public class AccountData
     {
         public Guid Id { get; set; }
 
-        public Guid UserAccountId { get; set; }
+        public Guid UserId { get; set; }
+
+        public UserData User { get; set; }
 
         public int Currency { get; set; }
 
