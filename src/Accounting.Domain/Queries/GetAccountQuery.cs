@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Accounting.Domain.Queries
 {
@@ -17,5 +15,7 @@ namespace Accounting.Domain.Queries
         public string Currency { get; set; }
 
         public string Description { get; set; }
+
+        public decimal Balance { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Accounting.Service.Commands
         public async Task<DepositResult> Handle(DepositCommand request, CancellationToken cancellationToken)
         {
             var account = await _accountRepository.FindAsync(request.AccountId);
-            var depositTransaction = account.Deposit(request.Amount);
+            var depositTransaction = account.Deposit(request.Amount, $"Deposit {request.Amount} {account.Currency.ToString()} to {account.Id.ToString("N")} operation");
             
             await _accountTransactionRepository.SaveAsync(depositTransaction);
 

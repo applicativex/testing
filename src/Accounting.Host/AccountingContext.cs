@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Accounting.Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
@@ -40,6 +41,13 @@ namespace Accounting.Host
                 .HasOne<AccountEntryData>()
                 .WithOne()
                 .HasForeignKey<AccountTransactionData>(x => x.CreditEntryId);
+
+            modelBuilder.Entity<UserData>().HasData(new UserData() { Id = SystemAccount.SystemUserId, Email = "system@gmail.com", FirstName = "SYSTEM", LastName = "SYSTEM" });
+
+            modelBuilder.Entity<AccountData>().HasData(
+                new AccountData() { Id = SystemAccount.FromCurrency(AccountCurrency.UAH).Id, Currency = (int)AccountCurrency.UAH, UserId = SystemAccount.SystemUserId },
+                new AccountData() { Id = SystemAccount.FromCurrency(AccountCurrency.EUR).Id, Currency = (int)AccountCurrency.EUR, UserId = SystemAccount.SystemUserId },
+                new AccountData() { Id = SystemAccount.FromCurrency(AccountCurrency.USD).Id, Currency = (int)AccountCurrency.USD, UserId = SystemAccount.SystemUserId });
         }
     }
 
@@ -80,6 +88,9 @@ namespace Accounting.Host
         public Guid DebitEntryId { get; set; }
 
         public Guid CreditEntryId { get; set; }
+
+        public string Description { get; set; }
+
     }
 
     public class AccountEntryData

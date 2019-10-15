@@ -18,7 +18,7 @@ namespace Accounting.Host.Controllers
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserAccount(Guid userId)
+        public async Task<IActionResult> GetUser(Guid userId)
         {
             var result = await _mediator.Send(new GetUserQuery
             {
@@ -27,8 +27,18 @@ namespace Accounting.Host.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{userId}/accounts")]
+        public async Task<IActionResult> GetUserAccounts(Guid userId)
+        {
+            var result = await _mediator.Send(new GetUserAccountsQuery
+            {
+                UserId = userId
+            });
+            return Ok(result);
+        }
+
         [HttpPost("")]
-        public async Task<IActionResult> CreateUser(CreateUserAccountRequest request)
+        public async Task<IActionResult> CreateUser(CreateUserRequest request)
         {
             var result = await _mediator.Send(new CreateUserCommand
             {
@@ -38,5 +48,14 @@ namespace Accounting.Host.Controllers
             });
             return Ok(result.UserId);
         }
+    }
+
+    public class CreateUserRequest
+    {
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Email { get; set; }
     }
 }

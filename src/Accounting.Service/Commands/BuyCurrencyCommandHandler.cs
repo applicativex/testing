@@ -26,11 +26,11 @@ namespace Accounting.Service.Commands
             var exchangeBaseAccount = SystemAccount.FromCurrency(baseAccount.Currency);
             var exchangeCurrencyAccount = SystemAccount.FromCurrency(currencyAccount.Currency);
 
-            var exchangeRate = await _currencyExchangeAdapter.GetExchangeRate(baseAccount.Currency, currencyAccount.Currency);
+            var exchangeRate = await _currencyExchangeAdapter.GetExchangeRate(currencyAccount.Currency, baseAccount.Currency);
             var baseAmount = request.Amount * exchangeRate;
 
-            var debitBaseAccount = baseAccount.Transfer(exchangeBaseAccount, baseAmount.Value);
-            var creditCurrencyAccount = exchangeCurrencyAccount.Transfer(currencyAccount, request.Amount);
+            var debitBaseAccount = baseAccount.Transfer(exchangeBaseAccount, baseAmount.Value, $"Buy {request.Amount} {currencyAccount.Currency.ToString()} operation");
+            var creditCurrencyAccount = exchangeCurrencyAccount.Transfer(currencyAccount, request.Amount, $"Buy {request.Amount} {currencyAccount.Currency.ToString()} operation");
 
             await _accountTransactionRepository.SaveAsync(debitBaseAccount);
             await _accountTransactionRepository.SaveAsync(creditCurrencyAccount);

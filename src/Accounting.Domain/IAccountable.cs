@@ -11,16 +11,16 @@
 
     public static class IAccountableExt
     {
-        public static AccountTransaction Deposit(this IAccountable account, decimal amount)
+        public static AccountTransaction Deposit(this IAccountable account, decimal amount, string description)
             =>
-            AccountTransaction.DepositTransaction(account, amount);
+            AccountTransaction.DepositTransaction(account, amount, description);
 
-        public static AccountTransaction Withdraw(this IAccountable account, decimal amount)
+        public static AccountTransaction Withdraw(this IAccountable account, decimal amount, string description)
             =>
-            AccountTransaction.WithdrawTransaction(account, amount);
+            AccountTransaction.WithdrawTransaction(account, amount, description);
 
-        public static AccountTransaction Transfer(this IAccountable fromAccount, IAccountable toAccount, decimal amount)
+        public static AccountTransaction Transfer(this IAccountable fromAccount, IAccountable toAccount, decimal amount, string description)
             =>
-            AccountTransaction.TransferTransaction(fromAccount, toAccount, amount);
+            AccountTransaction.TransferTransaction(fromAccount, toAccount, amount, description);
     }
 }

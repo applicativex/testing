@@ -27,17 +27,17 @@ namespace Accounting.UnitTests
         [Test]
         public void Account_Can_Be_Deposited()
         {
-            SUT.Deposit(100);
+            SUT.Deposit(100, "Deposit");
 
-            Assert.That(SUT.Balance(), Is.EqualTo(200m));
+            Assert.That(SUT.GetBalance(), Is.EqualTo(200m));
         }
 
         [Test]
         public void Account_Can_Be_Withdrawed()
         {
-            SUT.Withdraw(50);
+            SUT.Withdraw(50, "Withdraw");
 
-            Assert.That(SUT.Balance(), Is.EqualTo(50));
+            Assert.That(SUT.GetBalance(), Is.EqualTo(50));
         }
 
         [Test]
@@ -45,10 +45,10 @@ namespace Accounting.UnitTests
         {
             var depositAccount = new Account(Guid.NewGuid(), Guid.NewGuid(), AccountCurrency.UAH);
 
-            SUT.Transfer(depositAccount, 50);
+            SUT.Transfer(depositAccount, 50, "Transfer");
 
-            Assert.That(SUT.Balance(), Is.EqualTo(50));
-            Assert.That(depositAccount.Balance(), Is.EqualTo(50));
+            Assert.That(SUT.GetBalance(), Is.EqualTo(50));
+            Assert.That(depositAccount.GetBalance(), Is.EqualTo(50));
         }
     }
 }

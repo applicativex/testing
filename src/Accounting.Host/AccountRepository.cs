@@ -42,7 +42,7 @@ namespace Accounting.Host
 
         public async Task SaveAsync(Account account)
         {
-            await accountingContext.Accounts.AddAsync(new AccountData { Id = account.Id, Currency = (int)account.Currency, });
+            await accountingContext.Accounts.AddAsync(new AccountData { Id = account.Id, UserId = account.UserId, Currency = (int)account.Currency, });
             await accountingContext.SaveChangesAsync();
         }
 

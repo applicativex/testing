@@ -1,12 +1,13 @@
 ﻿using System;
 using Accounting.Domain;
-using Accounting.Service;
+using Accounting.Service.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Accounting.Host
 {
@@ -24,9 +25,21 @@ namespace Accounting.Host
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AccountingContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
-            services.AddMediatR(typeof(AccountTransferService));
+            services.AddScoped<IAccountTransactionRepository, AccountTransactionRepository>();
+            services.AddScoped<IAccountOperationQueryRepository, AccountOperationQueryRepository>();
+
+            services.AddHttpClient<NbuCurrencyExchangeClient>();
+            services.AddScoped<ICurrencyExchangeAdapter, NbuCurrencyExchangeAdapter>();
+
+            services.AddMediatR(typeof(GetUserQueryHandler).Assembly);
             services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Accounting API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +51,15 @@ namespace Accounting.Host
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Accounting API V1");
+            });
 
             app.UseMvc();
         }

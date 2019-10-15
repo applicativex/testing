@@ -35,6 +35,7 @@ namespace Accounting.Host
                     TransactionDate = accountingTransaction.TransactionDate,
                     DebitEntryId = accountingTransaction.DebitEntry.Id,
                     CreditEntryId = accountingTransaction.CreditEntry.Id,
+                    Description = accountingTransaction.Description
                 });
             await accountingContext.SaveChangesAsync();
         }

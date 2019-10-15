@@ -5,6 +5,8 @@ namespace Accounting.Domain
 {
     public sealed class SystemAccount : IAccountable
     {
+        public static Guid SystemUserId = Guid.Parse("6d452541-7c1d-4ba9-b480-d21ac3b30b83");
+
         private static readonly Dictionary<AccountCurrency, SystemAccount> _accountMap = new Dictionary<AccountCurrency, SystemAccount>
         {
             [AccountCurrency.UAH] = new SystemAccount(Guid.Parse("eb7ab20e-3130-47fc-a6a7-dbcd30a60a53"), AccountCurrency.UAH),

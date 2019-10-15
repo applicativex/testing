@@ -20,7 +20,7 @@ namespace Accounting.Service.Commands
         public async Task<WithdrawResult> Handle(WithdrawCommand request, CancellationToken cancellationToken)
         {
             var account = await _accountRepository.FindAsync(request.AccountId);
-            var withdrawTransaction = account.Withdraw(request.Amount);
+            var withdrawTransaction = account.Withdraw(request.Amount, $"Withdraw {request.Amount} {account.Currency.ToString()} from {account.Id.ToString("N")} operation");
 
             await _accountTransactionRepository.SaveAsync(withdrawTransaction);
             return new WithdrawResult

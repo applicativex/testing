@@ -3,15 +3,17 @@ using System;
 using Accounting.Host;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Accounting.Host.Migrations
 {
     [DbContext(typeof(AccountingContext))]
-    partial class AccountingContextModelSnapshot : ModelSnapshot
+    [Migration("20191012172139_V5")]
+    partial class V5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,26 +35,6 @@ namespace Accounting.Host.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Accounts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("eb7ab20e-3130-47fc-a6a7-dbcd30a60a53"),
-                            Currency = 1,
-                            UserId = new Guid("6d452541-7c1d-4ba9-b480-d21ac3b30b83")
-                        },
-                        new
-                        {
-                            Id = new Guid("b4db2e93-4b3b-4172-ba2d-568b7674b1d5"),
-                            Currency = 2,
-                            UserId = new Guid("6d452541-7c1d-4ba9-b480-d21ac3b30b83")
-                        },
-                        new
-                        {
-                            Id = new Guid("4eb3ae16-18ce-4fd9-a0e3-ccc1b87bfc11"),
-                            Currency = 3,
-                            UserId = new Guid("6d452541-7c1d-4ba9-b480-d21ac3b30b83")
-                        });
                 });
 
             modelBuilder.Entity("Accounting.Host.AccountEntryData", b =>
@@ -84,8 +66,6 @@ namespace Accounting.Host.Migrations
 
                     b.Property<Guid>("DebitEntryId");
 
-                    b.Property<string>("Description");
-
                     b.Property<DateTimeOffset>("TransactionDate");
 
                     b.HasKey("Id");
@@ -113,15 +93,6 @@ namespace Accounting.Host.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("6d452541-7c1d-4ba9-b480-d21ac3b30b83"),
-                            Email = "system@gmail.com",
-                            FirstName = "SYSTEM",
-                            LastName = "SYSTEM"
-                        });
                 });
 
             modelBuilder.Entity("Accounting.Host.AccountData", b =>

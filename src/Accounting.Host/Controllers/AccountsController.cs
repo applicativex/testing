@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Accounting.Domain;
+using Accounting.Domain.Commands;
 using Accounting.Domain.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,57 +27,65 @@ namespace Accounting.Host.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{accountId}/entries")]
-        public async Task<IActionResult> GetAccountEntries(Guid accountId)
+        [HttpGet("{accountId}/operations")]
+        public async Task<IActionResult> GetAccountOperations(Guid accountId)
         {
-            var result = await _mediator.Send(new GetAccountEntriesQuery
+            var result = await _mediator.Send(new GetAccountOperationsQuery
             {
                 AccountId = accountId
             });
             return Ok(result);
         }
 
-        //[HttpPost("")]
-        //public async Task<IActionResult> CreateAccount()
-        //{
-        //    var account = new Account(Guid.NewGuid(), Guid.NewGuid(), AccountCurrency.UAH);
-        //    await _accountRepository.SaveAsync(account);
+        [HttpPost("{accountId}/deposit")]
+        public async Task<IActionResult> Deposit(Guid accountId, [FromBody] DepositRequest request)
+        {
+            var result = await _mediator.Send(new DepositCommand
+            {
+                AccountId = accountId,
+                Amount = request.Amount
+            });
+            return Ok(result);
+        }
 
-        //    return Ok(account.Id.ToString("N"));
-        //}
+        [HttpPost("{accountId}/withdraw")]
+        public async Task<IActionResult> Withdraw(Guid accountId, [FromBody] WithdrawRequest request)
+        {
+            var result = await _mediator.Send(new WithdrawCommand
+            {
+                AccountId = accountId,
+                Amount = request.Amount
+            });
+            return Ok(result);
+        }
 
-        //[HttpPost("transaction")]
-        //public async Task<IActionResult> Transaction([FromBody] TransactionRequest transaction)
-        //{
-        //    var from = await _accountRepository.FindAsync(transaction.From);
-        //    var to = await _accountRepository.FindAsync(transaction.To);
-            
-        //    return Ok();
-        //}
+        [HttpPost("{accountId}/transfer")]
+        public async Task<IActionResult> Transfer(Guid accountId, [FromBody] TransferRequest request)
+        {
+            var result = await _mediator.Send(new TransferCommand
+            {
+                FromAccountId = accountId,
+                ToAccountId = request.AccountId,
+                Amount = request.Amount
+            });
+            return Ok(result);
+        }
     }
 
-    public class AccountResponse
-    {   
-        public string Id { get; set; }
-
-        public decimal Balance { get; set; }
-    }
-
-    public class TransactionRequest
+    public class DepositRequest
     {
-        public Guid From { get; set; }
-
-        public Guid To { get; set; }
-
         public decimal Amount { get; set; }
     }
 
-    public class CreateUserAccountRequest
+    public class WithdrawRequest
     {
-        public string FirstName { get; set; }
+        public decimal Amount { get; set; }
+    }
 
-        public string LastName { get; set; }
+    public class TransferRequest
+    {
+        public Guid AccountId { get; set; }
 
-        public string Email { get; set; }
+        public decimal Amount { get; set; }
     }
 }

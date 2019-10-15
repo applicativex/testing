@@ -35,7 +35,7 @@ namespace Accounting.Domain
 
         public AccountEntry Debit(decimal amount)
         {
-            if (Balance() < amount)
+            if (GetBalance() < amount)
             {
                 throw new InvalidOperationException();
             }
@@ -43,7 +43,7 @@ namespace Accounting.Domain
             return AddEntry(-amount);
         }
 
-        public decimal Balance()
+        public decimal GetBalance()
         {
             decimal result = 0;
             foreach (var entry in _entries)
