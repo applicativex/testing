@@ -4,6 +4,7 @@ using Accounting.Domain.Commands;
 using Accounting.Domain.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Accounting.Host.Controllers
 {
@@ -38,15 +39,16 @@ namespace Accounting.Host.Controllers
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> CreateUser(CreateUserRequest request)
+        public async Task<IActionResult> CreateUser([FromBody]CreateUserRequest request)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(request));
             var result = await _mediator.Send(new CreateUserCommand
             {
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email
             });
-            return Ok(result.UserId);
+            return Ok(result);
         }
     }
 
