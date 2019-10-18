@@ -5,3 +5,5 @@ and tested on level ofs:
 * Unit testing
 * Integration testing
 * Component testing
+
+Presentation: https://docs.google.com/presentation/d/1jrTzS6WqltKkU5Hq_SgOA5TQyqC-K9Wm_PiuNdKR2XY/edit?usp=sharing
