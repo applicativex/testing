@@ -41,7 +41,6 @@ namespace Accounting.Host.Controllers
         [HttpPost("")]
         public async Task<IActionResult> CreateUser([FromBody]CreateUserRequest request)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(request));
             var result = await _mediator.Send(new CreateUserCommand
             {
                 FirstName = request.FirstName,

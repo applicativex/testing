@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Accounting.Host
@@ -30,7 +31,7 @@ namespace Accounting.Host
             services.AddScoped<IAccountTransactionRepository, AccountTransactionRepository>();
             services.AddScoped<IAccountOperationQueryRepository, AccountOperationQueryRepository>();
 
-            services.AddHttpClient<NbuCurrencyExchangeClient>();
+            services.AddHttpClient<NbuCurrencyExchangeClient>().AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(500)));
             services.AddScoped<ICurrencyExchangeAdapter, NbuCurrencyExchangeAdapter>();
 
             services.AddMediatR(typeof(GetUserQueryHandler).Assembly);
@@ -66,10 +67,17 @@ namespace Accounting.Host
 
         private void UpdateDatabese(IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.CreateScope())
+            try
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<AccountingContext>();
-                dbContext.Database.Migrate();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<AccountingContext>();
+                    dbContext.Database.Migrate();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
             }
         }
     }

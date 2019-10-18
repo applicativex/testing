@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace Accounting.UnitTests
 {
+    [TestFixture]
     public class AccountTests
     {
         private Account SUT;
@@ -43,12 +44,12 @@ namespace Accounting.UnitTests
         [Test]
         public void Account_Can_Transfer()
         {
-            var depositAccount = new Account(Guid.NewGuid(), Guid.NewGuid(), AccountCurrency.UAH);
+            var transferAccount = new Account(Guid.NewGuid(), Guid.NewGuid(), AccountCurrency.UAH);
 
-            SUT.Transfer(depositAccount, 50, "Transfer");
+            SUT.Transfer(transferAccount, 50, "Transfer");
 
             Assert.That(SUT.GetBalance(), Is.EqualTo(50));
-            Assert.That(depositAccount.GetBalance(), Is.EqualTo(50));
+            Assert.That(transferAccount.GetBalance(), Is.EqualTo(50));
         }
     }
 }
