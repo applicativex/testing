@@ -6,4 +6,6 @@ and tested on level ofs:
 * Integration testing
 * Component testing
 
+Run component tests with run_component_tests.cmd
+
 Presentation: https://docs.google.com/presentation/d/1jrTzS6WqltKkU5Hq_SgOA5TQyqC-K9Wm_PiuNdKR2XY/edit?usp=sharing
